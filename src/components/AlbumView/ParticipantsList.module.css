@@ -1,0 +1,31 @@
+.participantsSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.participantIcon {
+  font-size: 16px;
+}
+
+.participantIcon img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.participantsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.participantBadge {
+  padding: 6px 12px;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}

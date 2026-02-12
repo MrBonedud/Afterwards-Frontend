@@ -1,0 +1,43 @@
+.container {
+  min-height: calc(100vh - 120px);
+  padding: 40px 20px;
+  background: var(--background);
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--text-color);
+  margin-bottom: 30px;
+  font-size: 32px;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+section h2 {
+  color: var(--text-color);
+  font-size: 20px;
+  margin-bottom: 15px;
+  margin-top: 25px;
+}
+
+section p {
+  color: var(--secondary-text);
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+ul {
+  list-style-position: inside;
+  color: var(--secondary-text);
+  line-height: 1.8;
+}
+
+ul li {
+  margin-bottom: 8px;
+}

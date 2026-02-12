@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+:root {
+  --primary-color: #6366f1;
+  --background: #ffffff;
+  --text-color: #1a1a1a;
+  --secondary-text: #666666;
+  --border-color: #e0e0e0;
+  --light-gray: #f9fafb;
+  --label-text: #333333;
+  --font-main: "Inter", system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--text-color);
+  background: var(--background);
+  margin: 0;
+  padding: 0;
+}
+
+/* Link resets */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+}
+
+/* Button resets */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}

@@ -1,0 +1,181 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  background: #f3f4f6;
+  padding: 20px;
+}
+
+.card {
+  display: flex;
+  background: var(--background);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+}
+
+.imageSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--light-gray);
+  padding: 30px;
+}
+
+.loginImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.formSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 60px;
+  background: var(--background);
+}
+
+.form {
+  width: 100%;
+  max-width: 350px;
+}
+
+.form h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text-color);
+  font-size: 28px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--label-text);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.signInButton {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  margin-top: 10px;
+}
+
+.signInButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+}
+
+.signInButton:active {
+  transform: translateY(0);
+}
+
+.signUpText {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--secondary-text);
+  font-size: 14px;
+}
+
+.signUpLink {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.signUpLink:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    max-width: 760px;
+    height: auto;
+  }
+
+  .formSection {
+    padding: 36px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .card {
+    flex-direction: column;
+    max-width: 520px;
+  }
+
+  .imageSection {
+    padding: 20px;
+  }
+
+  .loginImage {
+    max-height: 220px;
+  }
+
+  .formSection {
+    padding: 28px 28px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    border-radius: 10px;
+  }
+
+  .imageSection {
+    padding: 16px;
+  }
+
+  .formSection {
+    padding: 24px;
+  }
+
+  .form h1 {
+    font-size: 24px;
+  }
+}

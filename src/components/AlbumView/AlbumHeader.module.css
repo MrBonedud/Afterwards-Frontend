@@ -1,0 +1,40 @@
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.guestActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.joinButton {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #111827;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.joinButton:hover {
+  opacity: 0.9;
+}
+
+.editButton {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  background: #f3f4f6;
+}

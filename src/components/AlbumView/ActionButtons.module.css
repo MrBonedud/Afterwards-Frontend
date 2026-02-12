@@ -1,0 +1,43 @@
+.actions {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.uploadButton,
+.shareButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadButton img,
+.shareButton img {
+  width: 20px;
+  height: 20px;
+}
+
+.uploadButton {
+  background: #111827;
+  color: #fff;
+}
+
+.uploadButton:hover {
+  opacity: 0.9;
+}
+
+.shareButton {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.shareButton:hover {
+  background: #e5e7eb;
+}

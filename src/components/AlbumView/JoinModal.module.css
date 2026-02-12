@@ -1,0 +1,83 @@
+.joinOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.joinModal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+}
+
+.joinModal h2 {
+  margin: 0 0 8px 0;
+}
+
+.joinModal p {
+  margin: 0 0 16px 0;
+  color: #4b5563;
+}
+
+.joinError {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.joinForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.joinInput {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+}
+
+.joinActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.joinSubmit {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #111827;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.joinSubmit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.joinCancel {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+}

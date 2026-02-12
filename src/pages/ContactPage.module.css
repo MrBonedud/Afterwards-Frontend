@@ -1,0 +1,137 @@
+.container {
+  min-height: calc(100vh - 120px);
+  padding: 40px 20px;
+  background: var(--background);
+}
+
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--text-color);
+  margin-bottom: 10px;
+  font-size: 32px;
+}
+
+.subtitle {
+  color: var(--secondary-text);
+  font-size: 16px;
+  margin-bottom: 40px;
+}
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.contactInfo h2 {
+  color: var(--text-color);
+  font-size: 20px;
+  margin-bottom: 25px;
+}
+
+.infoItem {
+  margin-bottom: 30px;
+}
+
+.infoItem h3 {
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.infoItem p {
+  color: var(--secondary-text);
+  margin: 0;
+}
+
+.infoItem a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.infoItem a:hover {
+  text-decoration: underline;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.successMessage {
+  padding: 15px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  color: var(--label-text);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.formGroup input,
+.formGroup textarea {
+  padding: 12px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.submitButton {
+  padding: 12px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  margin-top: 10px;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
