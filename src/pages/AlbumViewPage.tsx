@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import type { AxiosResponse } from "axios";
 import { API_URL } from "../config/api";
 import { useAuth } from "../hooks/useAuth";
 import styles from "./AlbumViewPage.module.css";
@@ -61,23 +62,77 @@ export default function AlbumViewPage() {
   const hasAttemptedJoin = useRef(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const normalizedApiUrl = API_URL.replace(/\/+$/, "");
+  const apiBaseCandidates = useMemo(
+    () => Array.from(new Set([normalizedApiUrl, `${normalizedApiUrl}/api`])),
+    [normalizedApiUrl],
+  );
+
+  const buildApiCandidates = useCallback(
+    (paths: string[]) =>
+      Array.from(
+        new Set(
+          apiBaseCandidates.flatMap((base) =>
+            paths.map(
+              (path) => `${base}${path.startsWith("/") ? path : `/${path}`}`,
+            ),
+          ),
+        ),
+      ),
+    [apiBaseCandidates],
+  );
+
+  useEffect(() => {
+    hasAttemptedJoin.current = false;
+  }, [albumId]);
+
   const refreshAlbum = useCallback(async () => {
     if (!albumId) return;
 
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/albums/${albumId}`, {
-        withCredentials: true,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      setAlbum(response.data);
+      const albumCandidates = buildApiCandidates([`/albums/${albumId}`]);
+
+      let resolvedAlbum: AlbumData | null = null;
+      let lastError: unknown = null;
+
+      for (const endpoint of albumCandidates) {
+        try {
+          const response = await axios.get(endpoint, {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          resolvedAlbum = response.data as AlbumData;
+          break;
+        } catch (err) {
+          lastError = err;
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      if (!resolvedAlbum) {
+        throw lastError instanceof Error
+          ? lastError
+          : new Error("Album endpoint not found");
+      }
+
+      setAlbum(resolvedAlbum);
+      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load album");
+      setAlbum(null);
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        setError("Album not found or expired.");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to load album");
+      }
     } finally {
       setLoading(false);
     }
-  }, [albumId]);
+  }, [albumId, buildApiCandidates]);
 
   useEffect(() => {
     refreshAlbum();
@@ -112,7 +167,7 @@ export default function AlbumViewPage() {
   );
 
   useEffect(() => {
-    if (!albumId || !isSignedIn || hasAttemptedJoin.current) return;
+    if (!albumId || !isSignedIn || hasAttemptedJoin.current || !album) return;
 
     const token = localStorage.getItem("token");
     const displayName = getStoredUserDisplayName();
@@ -123,16 +178,40 @@ export default function AlbumViewPage() {
 
     const joinAsUser = async () => {
       try {
-        await axios.post(
-          `${API_URL}/albums/${albumId}/join`,
-          { displayName },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            withCredentials: true,
-          },
-        );
+        const joinCandidates = buildApiCandidates([`/albums/${albumId}/join`]);
+
+        let joined = false;
+        let lastError: unknown = null;
+
+        for (const endpoint of joinCandidates) {
+          try {
+            await axios.post(
+              endpoint,
+              { displayName },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                withCredentials: true,
+              },
+            );
+            joined = true;
+            break;
+          } catch (err) {
+            lastError = err;
+            if (axios.isAxiosError(err) && err.response?.status === 404) {
+              continue;
+            }
+            throw err;
+          }
+        }
+
+        if (!joined) {
+          throw lastError instanceof Error
+            ? lastError
+            : new Error("Join endpoint not found");
+        }
+
         await refreshAlbum();
       } catch (err) {
         console.error("Failed to join album as user:", err);
@@ -140,20 +219,42 @@ export default function AlbumViewPage() {
     };
 
     joinAsUser();
-  }, [albumId, isSignedIn, refreshAlbum]);
+  }, [albumId, isSignedIn, refreshAlbum, buildApiCandidates, album]);
 
   useEffect(() => {
     if (!albumId || isSignedIn || !album || guestDisplayName) return;
 
     const checkGuestSession = async () => {
       try {
-        const response = await axios.get(
-          `${API_URL}/albums/${albumId}/guest-session`,
-          {
-            withCredentials: true,
-            validateStatus: (status) => status < 500,
-          },
-        );
+        const guestSessionCandidates = buildApiCandidates([
+          `/albums/${albumId}/guest-session`,
+          `/album/${albumId}/guest-session`,
+        ]);
+
+        let response: AxiosResponse | null = null;
+        let lastError: unknown = null;
+
+        for (const endpoint of guestSessionCandidates) {
+          try {
+            response = await axios.get(endpoint, {
+              withCredentials: true,
+              validateStatus: (status) => status < 500,
+            });
+            break;
+          } catch (err) {
+            lastError = err;
+            if (axios.isAxiosError(err) && err.response?.status === 404) {
+              continue;
+            }
+            throw err;
+          }
+        }
+
+        if (!response) {
+          throw lastError instanceof Error
+            ? lastError
+            : new Error("Guest session endpoint not found");
+        }
 
         if (response.status === 200) {
           const name = response.data.displayName as string;
@@ -174,7 +275,7 @@ export default function AlbumViewPage() {
     };
 
     checkGuestSession();
-  }, [albumId, isSignedIn, album, guestDisplayName]);
+  }, [albumId, isSignedIn, album, guestDisplayName, buildApiCandidates]);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -193,25 +294,58 @@ export default function AlbumViewPage() {
     setUploading(true);
     try {
       const token = localStorage.getItem("token");
-      const formData = new FormData();
-      selectedFiles.forEach((file) => {
-        formData.append("photos", file);
-      });
-
-      // Get uploader name from localStorage if logged in
       const uploadedBy = isSignedIn
         ? getStoredUserDisplayName() || "Guest"
         : guestDisplayName || "Guest";
 
-      formData.append("uploadedBy", uploadedBy);
+      const uniqueCandidates = buildApiCandidates([
+        `/albums/${albumId}/photos`,
+        `/albums/${albumId}/upload`,
+        `/albums/${albumId}/photos/upload`,
+        "/photos/upload",
+      ]);
 
-      await axios.post(`${API_URL}/albums/${albumId}/photos`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        withCredentials: true,
-      });
+      const createFormData = (includeAlbumId: boolean) => {
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+          formData.append("photos", file);
+        });
+        formData.append("uploadedBy", uploadedBy);
+        if (includeAlbumId) {
+          formData.append("albumId", albumId);
+        }
+        return formData;
+      };
+
+      let uploadSucceeded = false;
+      let lastError: unknown = null;
+
+      for (const endpoint of uniqueCandidates) {
+        try {
+          const includeAlbumId = endpoint.includes("/photos/upload");
+          await axios.post(endpoint, createFormData(includeAlbumId), {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            withCredentials: true,
+          });
+          uploadSucceeded = true;
+          break;
+        } catch (err) {
+          lastError = err;
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      if (!uploadSucceeded) {
+        throw lastError instanceof Error
+          ? lastError
+          : new Error("Upload endpoint not found");
+      }
 
       // Refresh album data
       await refreshAlbum();
@@ -290,11 +424,34 @@ export default function AlbumViewPage() {
     setJoinError(null);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/albums/${albumId}/join`,
-        { displayName: trimmedName },
-        { withCredentials: true },
-      );
+      const joinCandidates = buildApiCandidates([`/albums/${albumId}/join`]);
+
+      let response: AxiosResponse | null = null;
+      let lastError: unknown = null;
+
+      for (const endpoint of joinCandidates) {
+        try {
+          response = await axios.post(
+            endpoint,
+            { displayName: trimmedName },
+            { withCredentials: true },
+          );
+          break;
+        } catch (err) {
+          lastError = err;
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      if (!response) {
+        throw lastError instanceof Error
+          ? lastError
+          : new Error("Join endpoint not found");
+      }
+
       setGuestDisplayName(response.data.displayName || trimmedName);
       setShowJoinPrompt(false);
       await refreshAlbum();
